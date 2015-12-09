@@ -1,6 +1,5 @@
 package com.example.xx_user.projectslistretrofit;
 
-import android.app.Activity;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,26 +13,34 @@ import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
-public class adapter extends ArrayAdapter<Project> {
+import butterknife.Bind;
+import butterknife.ButterKnife;
 
-    private Context context;
+public class ListAdapter extends ArrayAdapter<Project> {
+
     private List<Project> projectList;
 
-    public adapter(Context context, int resource, List<Project> objects) {
+    @Bind(R.id.name) TextView tv;
+    @Bind(R.id.img) ImageView img;
+
+    public ListAdapter(Context context, int resource, List<Project> objects) {
         super(context, resource, objects);
-        this.context = context;
         this.projectList = objects;
     }
 
+
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        LayoutInflater inflater = (LayoutInflater) context.getSystemService(Activity.LAYOUT_INFLATER_SERVICE);
-        View view = inflater.inflate(R.layout.item, parent, false);
+
         Project project = projectList.get(position);
-        TextView tv = (TextView) view.findViewById(R.id.name);
+        if (convertView == null) {
+            convertView = LayoutInflater.from(getContext()).inflate(R.layout.item, parent, false);
+        }
+        ButterKnife.bind(this, convertView);
+
         tv.setText(project.getProjectName());
-        ImageView img = (ImageView) view.findViewById(R.id.img);
-        Picasso.with(getContext()).load(project.getProjectImageUrl()).resize(200,100).into(img);
-        return view;
+        Picasso.with(getContext()).load(project.getProjectImage().getProjectImageUrl()).resize(200,100).into(img);
+
+        return convertView;
     }
 }

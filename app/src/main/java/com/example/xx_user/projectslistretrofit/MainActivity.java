@@ -1,6 +1,7 @@
 package com.example.xx_user.projectslistretrofit;
 
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -10,31 +11,35 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ListView;
 
-import com.example.xx_user.projectslistretrofit.model.Project;
-import com.example.xx_user.projectslistretrofit.network.api;
+import com.example.xx_user.projectslistretrofit.model.ProjectsWrapper;
+import com.example.xx_user.projectslistretrofit.network.RestApi;
 
-import java.util.List;
-
+import butterknife.Bind;
+import butterknife.ButterKnife;
 import retrofit.Call;
 import retrofit.Callback;
 import retrofit.GsonConverterFactory;
 import retrofit.Response;
 import retrofit.Retrofit;
 
-
 public class MainActivity extends AppCompatActivity {
 
-    List<Project> projectList;
+    public static final String BASE_URL = "http://91.250.82.77:8081/";
     public static String LOG_TAG = "myLogs";
+
+    private Retrofit retrofit;
+
+    @Bind(R.id.toolbar) Toolbar toolbar;
+    @Bind(R.id.list) ListView listView;
+    @Bind(R.id.fab) FloatingActionButton fab;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        ButterKnife.bind(this);
         setSupportActionBar(toolbar);
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -42,36 +47,41 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl("http://91.250.82.77:8081/3ssdemo/prj/json/")
-                .addConverterFactory(GsonConverterFactory.create())
-                .build();
+        retrofit = initRetrofit();
+        loadData();
+    }
 
-        api service = retrofit.create(api.class);
+    private void loadData() {
+        RestApi service = retrofit.create(RestApi.class);
 
-        Call<List<Project>> call = service.getData();
+        Call<ProjectsWrapper> call = service.getData();
 
-        call.enqueue(new Callback<List<Project>>() {
+        call.enqueue(new Callback<ProjectsWrapper>() {
             @Override
-            public void onResponse(Response<List<Project>> response, Retrofit retrofit) {
-                projectList = response.body();
-                Log.d(LOG_TAG, "name: " + projectList);
+            public void onResponse(Response<ProjectsWrapper> response, Retrofit retrofit) {
                 if (response.isSuccess()) {
-                    projectList = response.body();
-                    Log.d(LOG_TAG, "name: " + projectList);
-                    adapter adapt = new adapter(getApplicationContext(), R.layout.item, projectList);
-                    ListView listView = (ListView) findViewById(R.id.list);
-                    //listView.setListAdapter(adapt);
+                    ProjectsWrapper projectsWrapper = response.body();
+                    ListAdapter adapt = new ListAdapter(
+                            getApplicationContext(),
+                            R.layout.item,
+                            projectsWrapper.getProjectList());
                     listView.setAdapter(adapt);
                 }
             }
 
             @Override
             public void onFailure(Throwable t) {
-
+                Log.e(LOG_TAG,"1233", t);
             }
         });
+    }
 
+    @NonNull
+    private Retrofit initRetrofit() {
+        return new Retrofit.Builder()
+                .baseUrl(BASE_URL)
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
     }
 
     @Override
