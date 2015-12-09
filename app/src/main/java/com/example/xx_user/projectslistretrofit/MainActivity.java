@@ -1,0 +1,98 @@
+package com.example.xx_user.projectslistretrofit;
+
+import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
+import android.util.Log;
+import android.view.View;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.widget.ListView;
+
+import com.example.xx_user.projectslistretrofit.model.Project;
+import com.example.xx_user.projectslistretrofit.network.api;
+
+import java.util.List;
+
+import retrofit.Call;
+import retrofit.Callback;
+import retrofit.GsonConverterFactory;
+import retrofit.Response;
+import retrofit.Retrofit;
+
+
+public class MainActivity extends AppCompatActivity {
+
+    List<Project> projectList;
+    public static String LOG_TAG = "myLogs";
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.main);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+
+        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                finish();
+            }
+        });
+
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl("http://91.250.82.77:8081/3ssdemo/prj/json/")
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
+
+        api service = retrofit.create(api.class);
+
+        Call<List<Project>> call = service.getData();
+
+        call.enqueue(new Callback<List<Project>>() {
+            @Override
+            public void onResponse(Response<List<Project>> response, Retrofit retrofit) {
+                projectList = response.body();
+                Log.d(LOG_TAG, "name: " + projectList);
+                if (response.isSuccess()) {
+                    projectList = response.body();
+                    Log.d(LOG_TAG, "name: " + projectList);
+                    adapter adapt = new adapter(getApplicationContext(), R.layout.item, projectList);
+                    ListView listView = (ListView) findViewById(R.id.list);
+                    //listView.setListAdapter(adapt);
+                    listView.setAdapter(adapt);
+                }
+            }
+
+            @Override
+            public void onFailure(Throwable t) {
+
+            }
+        });
+
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.menu_main, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+
+        //noinspection SimplifiableIfStatement
+        if (id == R.id.action_settings) {
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+}
