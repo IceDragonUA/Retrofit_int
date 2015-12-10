@@ -5,13 +5,14 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.AdapterView;
-import android.widget.ListView;
 
+import com.example.xx_user.projectslistretrofit.model.Project;
 import com.example.xx_user.projectslistretrofit.model.ProjectsWrapper;
 import com.example.xx_user.projectslistretrofit.network.RestApi;
 
@@ -31,9 +32,9 @@ public class MainActivity extends AppCompatActivity {
     private Intent intentError;
     private Retrofit retrofit;
 
-    @Bind(R.id.list) ListView listView;
     @Bind(R.id.toolbar) Toolbar toolbar;
     @Bind(R.id.fab) FloatingActionButton fab;
+    @Bind(R.id.recycler_view) RecyclerView recycleView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,6 +43,7 @@ public class MainActivity extends AppCompatActivity {
         ButterKnife.bind(this);
         setSupportActionBar(toolbar);
 
+        recycleView.setLayoutManager(new LinearLayoutManager(this));
 
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -58,12 +60,12 @@ public class MainActivity extends AppCompatActivity {
     private void startInfoActivity() {
         intentInfo = new Intent(MainActivity.this, InfoActivity.class);
 
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        /*recycleView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> av, View view, int i, long l) {
                 intentInfo.putExtra("position", i);
                 startActivity(intentInfo);
             }
-        });
+        });*/
     }
 
     private void startErrorActivity() {
@@ -83,12 +85,17 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onResponse(Response<ProjectsWrapper> response, Retrofit retrofit) {
                 if (response.isSuccess()) {
+
                     ProjectsWrapper projectsWrapper = response.body();
-                    ListAdapter adapt = new ListAdapter(
-                            getApplicationContext(),
-                            R.layout.item,
-                            projectsWrapper.getProjectList());
-                    listView.setAdapter(adapt);
+                    ListAdapter adapter = new ListAdapter(MainActivity.this, projectsWrapper.getProjectList(), new ICommand<Project>() {
+                        @Override
+                        public void execute(Project selectedProject) {
+                            intentInfo = new Intent(MainActivity.this, InfoActivity.class);
+                            startActivity(intentInfo);
+                        }
+                    });
+                    recycleView.setAdapter(adapter);
+
                 }
             }
 
