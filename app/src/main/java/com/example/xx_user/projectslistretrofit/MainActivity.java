@@ -1,14 +1,15 @@
 package com.example.xx_user.projectslistretrofit;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.AdapterView;
 import android.widget.ListView;
 
 import com.example.xx_user.projectslistretrofit.model.ProjectsWrapper;
@@ -25,12 +26,13 @@ import retrofit.Retrofit;
 public class MainActivity extends AppCompatActivity {
 
     public static final String BASE_URL = "http://91.250.82.77:8081/";
-    public static String LOG_TAG = "myLogs";
 
+    private Intent intentInfo;
+    private Intent intentError;
     private Retrofit retrofit;
 
-    @Bind(R.id.toolbar) Toolbar toolbar;
     @Bind(R.id.list) ListView listView;
+    @Bind(R.id.toolbar) Toolbar toolbar;
     @Bind(R.id.fab) FloatingActionButton fab;
 
     @Override
@@ -39,6 +41,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.main);
         ButterKnife.bind(this);
         setSupportActionBar(toolbar);
+
 
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -49,6 +52,26 @@ public class MainActivity extends AppCompatActivity {
 
         retrofit = initRetrofit();
         loadData();
+        startInfoActivity();
+    }
+
+    private void startInfoActivity() {
+        intentInfo = new Intent(MainActivity.this, InfoActivity.class);
+
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            public void onItemClick(AdapterView<?> av, View view, int i, long l) {
+                intentInfo.putExtra("position", i);
+                startActivity(intentInfo);
+            }
+        });
+    }
+
+    private void startErrorActivity() {
+        intentError = new Intent(MainActivity.this, ErrorActivity.class);
+        intentError.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        intentError.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        intentError.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+        startActivity(intentError);
     }
 
     private void loadData() {
@@ -71,7 +94,7 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onFailure(Throwable t) {
-                Log.e(LOG_TAG,"1233", t);
+                startErrorActivity();
             }
         });
     }

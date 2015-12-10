@@ -17,4 +17,5 @@
     <string name="rightBtn">RIGHT</string>
 
     <string name="backBtn">Back</string>
+    <string name="errorMsg">Connection lost</string>
 </resources>
