@@ -22,19 +22,16 @@ public class Project implements Parcelable {
     @SerializedName("image")
     private Image projectImage;
 
-    public Project(int selectedProjectId,
-                   String selectedProjectName,
-                   String selectedProjectDescription,
-                   int selectedClientId,
-                   Image selectedProjectImage) {
-
-        projectId = selectedProjectId;
-        projectName = selectedProjectName;
-        projectDescription = selectedProjectDescription;
-        clientId = selectedClientId;
-        projectImage = selectedProjectImage;
+    public Project() {
     }
 
+    private Project(Parcel in) {
+        projectId = in.readInt();
+        projectName = in.readString();
+        projectDescription = in.readString();
+        clientId = in.readInt();
+        projectImage = in.readParcelable(null);
+    }
 
     public int getProjectId() {
         return projectId;
@@ -67,7 +64,7 @@ public class Project implements Parcelable {
         dest.writeString(projectName);
         dest.writeString(projectDescription);
         dest.writeInt(clientId);
-        dest.writeString(projectImage.getProjectImageUrl());
+        dest.writeParcelable(projectImage, flags);
     }
 
     public static final Parcelable.Creator<Project> CREATOR = new Parcelable.Creator<Project>() {
@@ -83,13 +80,7 @@ public class Project implements Parcelable {
         }
     };
 
-    private Project(Parcel in) {
-        projectId = in.readInt();
-        projectName = in.readString();
-        projectDescription = in.readString();
-        clientId = in.readInt();
-        projectImage = in.readValue(Image);
-    }
+
 
 }
 

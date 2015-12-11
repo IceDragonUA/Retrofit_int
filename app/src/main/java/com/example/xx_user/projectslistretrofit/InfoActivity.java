@@ -27,14 +27,8 @@ public class InfoActivity extends AppCompatActivity {
 
     public static void launchActivity(Context activityContext, Project selectedProject) {
 
-        Project project = new Project(
-                selectedProject.getProjectId(),
-                selectedProject.getProjectName(),
-                selectedProject.getProjectDescription(),
-                selectedProject.getClientId());
-
         Intent launchingIntent = new Intent(activityContext, InfoActivity.class);
-        launchingIntent.putExtra(SELECTED_PROJECT_KEY, project);
+        launchingIntent.putExtra(SELECTED_PROJECT_KEY, selectedProject);
         activityContext.startActivity(launchingIntent);
     }
 
