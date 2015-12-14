@@ -1,7 +1,23 @@
 package com.example.xx_user.projectslistretrofit.model;
 
-/**
- * Created by XX-User on 14.12.2015.
- */
+import com.google.gson.annotations.SerializedName;
+
 public class Client {
+
+    @SerializedName("id")
+    private int clientId;
+
+    @SerializedName("name")
+    private String clientName;
+
+    public Client() {
+    }
+
+    public int getClientId() {
+        return clientId;
+    }
+
+    public String getClientName() {
+        return clientName;
+    }
 }

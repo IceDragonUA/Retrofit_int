@@ -2,34 +2,27 @@ package com.example.xx_user.projectslistretrofit;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 
+import com.example.xx_user.projectslistretrofit.dao.DataDao;
 import com.example.xx_user.projectslistretrofit.model.Project;
-import com.example.xx_user.projectslistretrofit.model.ProjectsWrapper;
-import com.example.xx_user.projectslistretrofit.network.RestApi;
+import com.example.xx_user.projectslistretrofit.network.IDataLoadingResult;
+
+import java.util.List;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
-import retrofit.Call;
-import retrofit.Callback;
-import retrofit.GsonConverterFactory;
-import retrofit.Response;
-import retrofit.Retrofit;
 
 public class MainActivity extends AppCompatActivity {
 
-    public static final String BASE_URL = "http://91.250.82.77:8081/";
-
     private Intent intentError;
-    private Retrofit retrofit;
 
     @Bind(R.id.toolbar) Toolbar toolbar;
     @Bind(R.id.fab) FloatingActionButton fab;
@@ -51,8 +44,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        retrofit = initRetrofit();
-        loadData();
+        loadProjects();
     }
 
     private void startErrorActivity() {
@@ -63,40 +55,25 @@ public class MainActivity extends AppCompatActivity {
         startActivity(intentError);
     }
 
-    private void loadData() {
-        RestApi service = retrofit.create(RestApi.class);
+    private void loadProjects() {
 
-        Call<ProjectsWrapper> call = service.getData();
-
-        call.enqueue(new Callback<ProjectsWrapper>() {
+        DataDao.getInstance().getProjects(new IDataLoadingResult<List<Project>>() {
             @Override
-            public void onResponse(Response<ProjectsWrapper> response, Retrofit retrofit) {
-                if (response.isSuccess()) {
-
-                    ProjectsWrapper projectsWrapper = response.body();
-                    ListAdapter adapter = new ListAdapter(MainActivity.this, projectsWrapper.getProjectList(), new ICommand<Project>() {
-                        @Override
-                        public void execute(Project selectedProject) {
-                            InfoActivity.launchActivity(MainActivity.this, selectedProject);
-                        }
-                    });
-                    recycleView.setAdapter(adapter);
-                }
+            public void onResult(List<Project> projects) {
+                ListAdapter adapter = new ListAdapter(MainActivity.this, projects, new ICommand<Project>() {
+                    @Override
+                    public void execute(Project selectedProject) {
+                        InfoActivity.launchActivity(MainActivity.this, selectedProject);
+                    }
+                });
+                recycleView.setAdapter(adapter);
             }
 
             @Override
-            public void onFailure(Throwable t) {
+            public void onFailure(Throwable ex) {
                 startErrorActivity();
             }
         });
-    }
-
-    @NonNull
-    private Retrofit initRetrofit() {
-        return new Retrofit.Builder()
-                .baseUrl(BASE_URL)
-                .addConverterFactory(GsonConverterFactory.create())
-                .build();
     }
 
     @Override
