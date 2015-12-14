@@ -22,15 +22,27 @@ public class Project implements Parcelable {
     @SerializedName("image")
     private Image projectImage;
 
+    @SerializedName("technologies")
+    private String[] projectTechnologies;
+
+    @SerializedName("supportedScreens")
+    private String[] projectSupportedScreens;
+
+    @SerializedName("solutionTypes")
+    private String[] projectSolutionTypes;
+
     public Project() {
     }
 
-    private Project(Parcel in) {
-        projectId = in.readInt();
-        projectName = in.readString();
-        projectDescription = in.readString();
-        clientId = in.readInt();
-        projectImage = in.readParcelable(null);
+    private Project(Parcel parcel) {
+        projectId = parcel.readInt();
+        projectName = parcel.readString();
+        projectDescription = parcel.readString();
+        clientId = parcel.readInt();
+        projectImage = parcel.readParcelable(Project.class.getClassLoader());
+        projectTechnologies = parcel.createStringArray();
+        projectSupportedScreens = parcel.createStringArray();
+        projectSolutionTypes = parcel.createStringArray();
     }
 
     public int getProjectId() {
@@ -53,6 +65,18 @@ public class Project implements Parcelable {
         return projectImage;
     }
 
+    public String[] getProjectTechnologies() {
+        return projectTechnologies;
+    }
+
+    public String[] getProjectSupportedScreens() {
+        return projectSupportedScreens;
+    }
+
+    public String[] getProjectSolutionTypes() {
+        return projectSolutionTypes;
+    }
+
     @Override
     public int describeContents() {
         return 0;
@@ -65,6 +89,9 @@ public class Project implements Parcelable {
         dest.writeString(projectDescription);
         dest.writeInt(clientId);
         dest.writeParcelable(projectImage, flags);
+        dest.writeStringArray(projectTechnologies);
+        dest.writeStringArray(projectSupportedScreens);
+        dest.writeStringArray(projectSolutionTypes);
     }
 
     public static final Parcelable.Creator<Project> CREATOR = new Parcelable.Creator<Project>() {
@@ -80,17 +107,9 @@ public class Project implements Parcelable {
         }
     };
 
-
-
 }
 
 /*
-String[] projectName,
-String[] projectImageUrl,
-String[] projectDescription,
-String[] projectTechnologies,
-String[] projectSupportedScreens,
-String[] projectSolutionTypes,
 String[] clientName,
 String[] projectAssetsUrl,
 */

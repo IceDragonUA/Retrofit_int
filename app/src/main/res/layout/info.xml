@@ -45,14 +45,28 @@
                     android:textColor="#000"
                     android:textSize="18sp" />
 
-                <ImageView
-                    android:id="@+id/logo"
+                <FrameLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:layout_gravity="top"
-                    android:layout_marginTop="15dp"
-                    android:layout_weight="1"
-                    android:contentDescription="@string/logo" />
+                    android:layout_marginLeft="20dp"
+                    android:layout_marginRight="20dp" >
+
+                    <ImageView
+                        android:id="@+id/logo"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="15dp"
+                        android:layout_gravity="center"
+                        android:scaleType="fitXY"
+                        android:contentDescription="@string/logo" />
+
+                    <ProgressBar
+                        android:id="@+id/logoProgressBar"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:visibility="visible" />
+                </FrameLayout>
 
                 <TextView
                     android:id="@+id/description"
@@ -145,7 +159,8 @@
                         android:layout_marginRight="50dp"
                         android:enabled="true"
                         android:focusable="false"
-                        android:focusableInTouchMode="false" />
+                        android:focusableInTouchMode="false"
+                        android:background="@drawable/button_left" />
 
                     <Button
                         android:id="@+id/right"
@@ -154,7 +169,8 @@
                         android:layout_marginLeft="50dp"
                         android:enabled="true"
                         android:focusable="false"
-                        android:focusableInTouchMode="false" />
+                        android:focusableInTouchMode="false"
+                        android:background="@drawable/button_right" />
                 </LinearLayout>
 
                 <Button

@@ -7,8 +7,13 @@ import retrofit.http.Query;
 
 public interface RestApi {
 
-    @GET("3ssdemo/prj/json//projects.php")
+    @GET("3ssdemo/prj/json/projects.php")
     Call<ProjectsWrapper> getData();
+
+/*
+    @GET("3ssdemo/prj/json/clients.php")
+    Call<> getData();
+*/
 
  /*   @GET("3ssdemo/prj/json/galleryAssets.php")
     Call<> getAssetByProject(@Query("projectId") String projectId);*/
