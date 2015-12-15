@@ -60,7 +60,7 @@ public class MainActivity extends AppCompatActivity {
         DataDao.getInstance().getProjects(new IDataLoadingResult<List<Project>>() {
             @Override
             public void onResult(List<Project> projects) {
-                ListAdapter adapter = new ListAdapter(MainActivity.this, projects, new ICommand<Project>() {
+                CustomListAdapter adapter = new CustomListAdapter(MainActivity.this, projects, new ICommand<Project>() {
                     @Override
                     public void execute(Project selectedProject) {
                         InfoActivity.launchActivity(MainActivity.this, selectedProject);

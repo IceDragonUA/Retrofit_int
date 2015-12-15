@@ -18,14 +18,14 @@ import java.util.List;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 
-public class ListAdapter extends RecyclerView.Adapter<ListAdapter.ListAdapterHolder> {
+public class CustomListAdapter extends RecyclerView.Adapter<CustomListAdapter.ListAdapterHolder> {
 
     private final Context context;
     private final List<Project> projectList;
     private final ICommand<Project> clickCommand;
 
 
-    public ListAdapter(Context context, List<Project> projectList, ICommand<Project> clickCommand) {
+    public CustomListAdapter(Context context, List<Project> projectList, ICommand<Project> clickCommand) {
         this.context = context;
         this.projectList = projectList;
         this.clickCommand = clickCommand;
@@ -33,7 +33,7 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.ListAdapterHol
 
     @Override
     public ListAdapterHolder onCreateViewHolder(ViewGroup viewGroup, int position) {
-        View rootView = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.item, viewGroup, false);
+        View rootView = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.list_item, viewGroup, false);
         return new ListAdapterHolder(context, rootView);
     }
 

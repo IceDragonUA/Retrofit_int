@@ -18,4 +18,5 @@
 
     <string name="backBtn">Back</string>
     <string name="errorMsg">Connection lost</string>
+    <string name="slider">Contex</string>
 </resources>
